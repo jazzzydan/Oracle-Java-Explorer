@@ -4,6 +4,13 @@
  */
 package duke.choice;
 
+import io.helidon.webserver.Routing;
+import io.helidon.webserver.ServerConfiguration;
+import io.helidon.webserver.WebServer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
 /**
  *
  * @author opc
@@ -36,6 +43,19 @@ public class ShopApp {
         
         Clothing [] items = {item1, item2, new Clothing("Green Scarf", 5.00, "S"), new Clothing("Blue T-Shirt", 10.50, "S")};
         
+        try {
+            ItemList list = new ItemList (items);
+            Routing routing = Routing.builder()
+                    .get("/items", list).build();
+            ServerConfiguration config = ServerConfiguration.builder()
+                    .bindAddress(InetAddress.getLocalHost())
+                    .port(8888).build();
+            WebServer ws = WebServer.create(config, routing);
+            ws.start();
+        } catch (UnknownHostException ex) {
+            ex.printStackTrace();
+        }
+        
 //        item1.setDescription("Blue Jacket");
 //        item1.setPrice((Double) 20.90);
                 
@@ -60,9 +80,11 @@ public class ShopApp {
         
         c1.addItems(items);
         
+        Arrays.sort(c1.getItems());
+        
         for (Clothing item : items) {
-            System.out.println("Item: " + item.getDescription() + ", " + item.getPrice() + ", " + item.getSize());
-
+        //    System.out.println("Item: " + item.getDescription() + ", " + item.getPrice() + ", " + item.getSize());
+            System.out.println("Item: " + item);
         }
         
         int average = 0;
